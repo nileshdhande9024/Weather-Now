@@ -2,29 +2,29 @@ import React from 'react';
 import { useState } from 'react';
 
 const Weathernow = () => {
-  const[city,setcity]=useState("");
+  const[city,setcity]=useState(""); //create 4 usestate for setcity,setweather,setloading,seterror 
   const[weather,setweather]=useState(null);
   const[loading,setloading]=useState(false);
   const[error,seterror]=useState("");
 
-  async function handleSearch(){
-    if(!city.trim()) return;
+  async function handleSearch(){ //we use async function for making promises
+    if(!city.trim()) return; //trim function for removing whitespaces
     setloading(true);
     seterror("");
     setweather(null);
  
   try{
-    const getRes=await fetch(
-      `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(city)}&count=1`
+    const getRes=await fetch(  //await is use for , wait for fetching data, 
+      `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(city)}&count=1` //open meteo API
     );
-    const getData=await getRes.json();
+    const getData=await getRes.json(); //converted fetched data into json file
     console.log(getData);
     if(!getData.results || getData.results.length===0){
       seterror("Sorry City Not Found...");
       setloading(false);
       return;
     }
-    const { latitude, longitude, name, country,admin1 } = getData.results[0];
+    const { latitude, longitude, name, country } = getData.results[0];
 
     const weatherRes=await fetch(
       `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current_weather=true`
@@ -40,7 +40,7 @@ const Weathernow = () => {
     });
     setcity("");
   }catch (e){
-    seterror("Something Went Wrong");
+    seterror("Something Went Wrong");  //if error is there,this message will shown
   }
   finally{
     setloading(false);
